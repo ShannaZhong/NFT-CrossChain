@@ -24,7 +24,7 @@ task("burn-and-cross")
     const linkTokenAddress = networkConfig[network.config.chainId].linkToken;
     const linkToken = await ethers.getContractAt("LinkToken", linkTokenAddress);
     const nftPoolBurnAndMint = await ethers.getContract("NFTPoolBurnAndMint", firstAccount);
-    const transferTx =  await linkToken.transfer(nftPoolBurnAndMint.target, ethers.parseEther("3"));
+    const transferTx =  await linkToken.transfer(nftPoolBurnAndMint.target, ethers.parseEther("2"));
     transferTx.wait(6);
     const balance = await linkToken.balanceOf(nftPoolBurnAndMint.target);
     console.log(`balance of pool is ${balance}`);

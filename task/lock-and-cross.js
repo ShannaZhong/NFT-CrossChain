@@ -24,7 +24,7 @@ task("lock-and-cross")
     const linkTokenAddress = networkConfig[network.config.chainId].linkToken;
     const linkToken = await ethers.getContractAt("LinkToken", linkTokenAddress);
     const nftPoolLockAndRelease = await ethers.getContract("NFTPoolLockAndRelease", firstAccount);
-    const transferTx =  await linkToken.transfer(nftPoolLockAndRelease.target, ethers.parseEther("10"));
+    const transferTx =  await linkToken.transfer(nftPoolLockAndRelease.target, ethers.parseEther("2"));
     transferTx.wait(6);
     const balance = await linkToken.balanceOf(nftPoolLockAndRelease.target);
     console.log(`balance of pool is ${balance}`);
