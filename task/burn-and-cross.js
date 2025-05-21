@@ -1,7 +1,7 @@
 const { task } = require("hardhat/config");
 const { networkConfig } = require("../helper-hardhat-config");
 
-task("lock-and-cross")
+task("burn-and-cross")
   .addOptionalParam("chainselector", "chain selector of dest chain")
   .addOptionalParam("receiver", "receiver address on dest chain")
   .addParam("tokenid", "token id to be crossed chain")
@@ -14,8 +14,8 @@ task("lock-and-cross")
     if (taskArgs.receiver) {
         receiver = taskArgs.receiver;
     } else {
-      const nftPoolBurnAndMintDeployment = await hre.companionNetworks["destChain"].deployments.get("NFTPoolBurnAndMint");
-      receiver = nftPoolBurnAndMintDeployment.address;
+      const nftPoolLockAndReleaseDeployment = await hre.companionNetworks["destChain"].deployments.get("NFTPoolLockAndRelease");
+      receiver = nftPoolLockAndReleaseDeployment.address;
       console.log("receiver is not set in command");
     }
     console.log(`receiver's address is ${receiver}`);
@@ -23,25 +23,25 @@ task("lock-and-cross")
     // transfer 10 link token to address of pool
     const linkTokenAddress = networkConfig[network.config.chainId].linkToken;
     const linkToken = await ethers.getContractAt("LinkToken", linkTokenAddress);
-    const nftPoolLockAndRelease = await ethers.getContract("NFTPoolLockAndRelease", firstAccount);
-    const transferTx =  await linkToken.transfer(nftPoolLockAndRelease.target, ethers.parseEther("10"));
+    const nftPoolBurnAndMint = await ethers.getContract("NFTPoolBurnAndMint", firstAccount);
+    const transferTx =  await linkToken.transfer(nftPoolBurnAndMint.target, ethers.parseEther("3"));
     transferTx.wait(6);
-    const balance = await linkToken.balanceOf(nftPoolLockAndRelease.target);
+    const balance = await linkToken.balanceOf(nftPoolBurnAndMint.target);
     console.log(`balance of pool is ${balance}`);
 
     // approve pool address to call transferFrom
-    const nft = await ethers.getContract("MyToken", firstAccount);
-    await nft.approve(nftPoolLockAndRelease.target, tokenId);
+    const wnft = await ethers.getContract("WrappedMyToken", firstAccount);
+    await wnft.approve(nftPoolBurnAndMint.target, tokenId);
     console.log(`approve success.`);
 
-    // call lockAndSendNFT
-    const lockAndSendNFTtx = await nftPoolLockAndRelease.lockAndSendNFT(
+    // call burnAndSendNFT
+    const burnAndSendNFTtx = await nftPoolBurnAndMint.burnAndSendNFT(
         tokenId,
         firstAccount,
         chainSelector,
         receiver,
     )
-    console.log(`ccip transaction is sent, the tx is ${lockAndSendNFTtx.hash}`);
+    console.log(`ccip transaction is sent, the tx is ${burnAndSendNFTtx.hash}`);
 })
 
 module.exports = {};
