@@ -31,7 +31,10 @@ module.exports = {
       url: SEPOLIA_RPC_URL,
       accounts: [PRIVATE_KEY],
       chainId: 11155111,
-      blockConfirmations: 6
+      blockConfirmations: 6,
+      companionNetworks: {
+        destChain: "saigon",
+      }
     },
     // amoy: {
     //   url: AMOY_RPC_URL,
@@ -43,7 +46,10 @@ module.exports = {
       url: "https://saigon-testnet.roninchain.com/rpc",
       accounts: [PRIVATE_KEY],
       chainId: 2021,
-      blockConfirmations: 6
+      blockConfirmations: 6,
+      companionNetworks: {
+        destChain: "sepolia",
+      }
     }
   }
 };
